@@ -1,0 +1,19 @@
+---
+name: Unit tests
+
+on: [push, pull_request]
+
+jobs:
+  build-and-unit-test:
+    name: Test unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run unit tests
+        shell: bash
+        run: cargo test
+      - name: cargo clippy
+        shell: cargo clippy -- -D warnings
+      - name: cargo fmt
+        shell: cargo fmt

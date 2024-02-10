@@ -1,0 +1,18 @@
+[package]
+name = "fclicache"
+version = "1.0.0"
+edition = "2021"
+description = "fclicache is a command-line utility that caches the output of resource-intensive commands, enabling faster retrieval of results when the same commands are executed repeatedly within a specified Time-to-Live (TTL) period."
+readme = "README.md"
+license-file = "LICENSE"
+keywords = ["cache", "caching", "cli", "command", "ssh-client"]
+repository = "https://github.com/Miyoshi-Ryota/fclicache"
+homepage = "https://github.com/Miyoshi-Ryota/fclicache"
+categories = ["command-line-interface", "command-line-utilities", "caching"]
+authors = ["Miyoshi-Ryota <m1yosh1.ry0t4@gmail.com>"]
+
+[dependencies]
+clap = { version = "4.5.0", features = ["derive"] }
+
+[lib]
+doctest = false
