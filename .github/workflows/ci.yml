@@ -14,6 +14,8 @@ jobs:
         shell: bash
         run: cargo test
       - name: cargo clippy
-        shell: cargo clippy -- -D warnings
+        shell: bash
+        run: cargo clippy -- -D warnings
       - name: cargo fmt
-        shell: cargo fmt
+        shell: bash
+        run: cargo fmt

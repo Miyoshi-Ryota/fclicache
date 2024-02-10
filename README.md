@@ -1,5 +1,5 @@
 ![Unit Test and Lint Status](https://github.com/Miyoshi-Ryota/fclicache/actions/workflows/ci.yml/badge.svg)
-[![Docs.rs](https://docs.rs/fclicache/badge.svg)](https://docs.rs/fclicache/latest/async_ssh2_tokio/)
+[![Docs.rs](https://docs.rs/fclicache/badge.svg)](https://docs.rs/fclicache/latest/fclicache/)
 [![Crates.io](https://img.shields.io/crates/v/fclicache.svg)](https://crates.io/crates/fclicache)
 
 # fclicache - File-based Simple CLI Cache
@@ -8,9 +8,9 @@ fclicache is a command-line utility that caches the output of resource-intensive
 
 # Features
 
-Efficient Caching: Saves the output of CLI commands, avoiding repeated execution of time-consuming operations.
-Time-to-Live (TTL): Customizable cache duration to ensure the freshness of the cached data.
-Simple Usage: Easy to integrate into existing workflows with minimal configuration.
+- **Efficient Caching:** Saves the output of CLI commands, avoiding repeated execution of time-consuming operations.
+- **Time-to-Live (TTL):** Customizable cache duration to ensure the freshness of the cached data.
+- **Simple Usage:** Easy to integrate into existing workflows with minimal configuration.
 
 # Installation
 
@@ -50,5 +50,11 @@ fclicache utilizes a simple file-based caching mechanism. This means that your c
 # Contributing
 We are very open to any contributions! Your input is invaluable to us, and we strive to make incorporating your suggestions and improvements as seamless as possible.
 
-* Open to All: Whether it's feature suggestions, bug reports, or code improvements, every contribution is welcome.
-* Ongoing Maintenance: Even if this repository might appear inactive or outdated at times, rest assured that we actively review and accept pull requests.
+- **Open to All:** Whether it's feature suggestions, bug reports, or code improvements, every contribution is welcome.
+- **Ongoing Maintenance:** Even if this repository might appear inactive or outdated at times, rest assured that we actively review and accept pull requests.
+
+## Show Your Support
+
+If you find `fclicache` useful, consider giving it a star on GitHub! Your support motivates us to continuously improve and maintain the project.
+
+[Star `fclicache` on GitHub](https://github.com/Miyoshi-Ryota/fclicache)
