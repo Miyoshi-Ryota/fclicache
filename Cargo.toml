@@ -1,6 +1,6 @@
 [package]
 name = "fclicache"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 description = "fclicache is a command-line utility that caches the output of resource-intensive commands, enabling faster retrieval of results when the same commands are executed repeatedly within a specified Time-to-Live (TTL) period."
 readme = "README.md"
