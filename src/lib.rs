@@ -29,6 +29,8 @@ pub fn cache_aware_execute_command(command: &str, ttl: u64, cache_file: &PathBuf
                 &fs::read(cache_file).expect("Unable to read cache file"),
             )
             .to_string();
+        } else {
+            clean_cache(cache_file);
         }
     }
 
@@ -38,6 +40,11 @@ pub fn cache_aware_execute_command(command: &str, ttl: u64, cache_file: &PathBuf
         .expect("failed to execute process");
     fs::write(cache_file, &output.stdout).expect("Unable to write cache file");
     String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+/// This function removes the cache file.
+pub fn clean_cache(cache_file: &PathBuf) {
+    fs::remove_file(cache_file).expect("Unable to remove cache file");
 }
 
 #[cfg(test)]
@@ -141,6 +148,39 @@ mod tests {
             duration >= Duration::from_secs(1),
             "Test took too short: {:?}",
             duration
+        );
+    }
+
+    #[test]
+    /// This test case is to check
+    /// if the cache file is renewed
+    /// when command is re-executed after the cache is expired.
+    fn re_cache_execution_after_cache_is_expired() {
+        let ctx = TestContext::new(&format!("{}{}", file!(), line!()));
+
+        let cache_file = ctx.cache_root_path.join("test_cache");
+        let _ = std::fs::write(&cache_file, "not hello").expect("Unable to write cache file");
+        let old_cache_file_created = fs::metadata(&cache_file)
+            .expect("Unable to read metadata of cache file")
+            .created()
+            .expect("Unable to read created date of cache file");
+
+        let command = "sleep 1 && echo 'hello'";
+        let ttl = 1;
+
+        sleep(Duration::from_secs(2));
+
+        let _ = super::cache_aware_execute_command(command, ttl, &cache_file);
+
+        let renewed_cache_file_created = fs::metadata(&cache_file)
+            .expect("Unable to read metadata of cache file")
+            .created()
+            .expect("Unable to read created date of cache file");
+
+
+        assert!(
+            renewed_cache_file_created > old_cache_file_created,
+            "Cache file is not renewed"
         );
     }
 }
