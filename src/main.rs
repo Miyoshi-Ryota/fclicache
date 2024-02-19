@@ -10,6 +10,11 @@ struct Args {
     #[arg(short, long, default_value = "3600")]
     ttl: u64,
 
+    /// Clean a cache and re-execute the command.
+    /// Of-cause the result will be cached again.
+    #[arg(short = 'c', long = "clean")]
+    force_renew_cache: bool,
+
     /// Target cli command to cache.
     /// This argument should be quoted if it contains spaces.
     /// For example, 'sleep 10 && date'
@@ -19,7 +24,8 @@ struct Args {
 fn main() {
     let args = Args::parse();
     let ttl = args.ttl;
-    let command = args.command;
+    let command: String = args.command;
+    let does_force_renew_cache = args.force_renew_cache;
 
     let cache_root_dir = env::temp_dir().join("fclicache/caches");
     if !cache_root_dir.exists() {
@@ -36,7 +42,8 @@ fn main() {
         cache_aware_execute_command(
             &command,
             ttl,
-            &cache_root_dir.join(hash(&command).to_string())
+            &cache_root_dir.join(hash(&command).to_string()),
+            does_force_renew_cache,
         )
     );
 }

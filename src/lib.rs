@@ -14,7 +14,12 @@ pub fn hash<T: Hash>(t: &T) -> u64 {
 
 /// This function executes the given command and caches the result if the cache is expired or not exists.
 /// If the cache is not expired, it just returns the cached result without execution command.
-pub fn cache_aware_execute_command(command: &str, ttl: u64, cache_file: &PathBuf) -> String {
+pub fn cache_aware_execute_command(
+    command: &str,
+    ttl: u64,
+    cache_file: &PathBuf,
+    does_force_renew_cache: bool,
+) -> String {
     if cache_file.exists() && cache_file.is_file() {
         let metadata = fs::metadata(cache_file).expect("Unable to read metadata of cache file");
         let created = metadata
@@ -24,7 +29,7 @@ pub fn cache_aware_execute_command(command: &str, ttl: u64, cache_file: &PathBuf
         let elapsed = now
             .duration_since(created)
             .expect("Unable to calculate elapsed time");
-        if elapsed.as_secs() < ttl {
+        if elapsed.as_secs() < ttl && !does_force_renew_cache {
             return String::from_utf8_lossy(
                 &fs::read(cache_file).expect("Unable to read cache file"),
             )
@@ -94,7 +99,7 @@ mod tests {
 
         let start = Instant::now(); // Start timing
 
-        let result = super::cache_aware_execute_command(command, ttl, &cache_file);
+        let result = super::cache_aware_execute_command(command, ttl, &cache_file, false);
         assert_eq!(result, "not hello");
 
         let duration = start.elapsed(); // Measure how long it took
@@ -116,7 +121,7 @@ mod tests {
 
         let start = Instant::now(); // Start timing
 
-        let result = super::cache_aware_execute_command(command, ttl, &cache_file);
+        let result = super::cache_aware_execute_command(command, ttl, &cache_file, false);
         assert_eq!(result, "hello\n");
 
         let duration = start.elapsed(); // Measure how long it took
@@ -140,7 +145,7 @@ mod tests {
         sleep(Duration::from_secs(1));
         let start = Instant::now(); // Start timing
 
-        let result = super::cache_aware_execute_command(command, ttl, &cache_file);
+        let result = super::cache_aware_execute_command(command, ttl, &cache_file, false);
         assert_eq!(result, "hello\n");
 
         let duration = start.elapsed(); // Measure how long it took
@@ -170,17 +175,31 @@ mod tests {
 
         sleep(Duration::from_secs(2));
 
-        let _ = super::cache_aware_execute_command(command, ttl, &cache_file);
+        let _ = super::cache_aware_execute_command(command, ttl, &cache_file, false);
 
         let renewed_cache_file_created = fs::metadata(&cache_file)
             .expect("Unable to read metadata of cache file")
             .created()
             .expect("Unable to read created date of cache file");
 
-
         assert!(
             renewed_cache_file_created > old_cache_file_created,
             "Cache file is not renewed"
         );
+    }
+
+    #[test]
+    fn force_renew_cache() {
+        let ctx = TestContext::new(&format!("{}{}", file!(), line!()));
+
+        let cache_file = ctx.cache_root_path.join("test_cache");
+        let _ = std::fs::write(&cache_file, "not hello").expect("Unable to write cache file");
+
+        let command = "sleep 1 && echo 'hello'";
+        let ttl = 60;
+
+        let result = super::cache_aware_execute_command(command, ttl, &cache_file, true);
+
+        assert!(result == "hello\n", "Cache is not renewed: {:?}", result);
     }
 }
